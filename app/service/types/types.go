@@ -14,7 +14,7 @@ type StrollReply struct {
 }
 
 type NextGroupReq struct {
-	NextKey uint `form:"next_key" binding:"required,numeric,gt=0"`
+	NextKey uint `form:"next_key,default=0" binding:"omitempty,numeric,gte=0"`
 	Size    uint `form:"size,default=50" binding:"omitempty,numeric,gt=0,lt=100"`
 }
 

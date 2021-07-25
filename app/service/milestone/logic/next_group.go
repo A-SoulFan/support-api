@@ -31,17 +31,23 @@ func NewGroupLogic(ctx context.Context, svcCtx *service.Context) NextGroupLogic 
 
 func (ng *NextGroupLogic) NextGroup(req types.NextGroupReq) (*types.PaginationList, error) {
 	var (
-		list    []*model.Milestone
-		nextKey *uint
-		err     error
+		timestamp uint
+		list      []*model.Milestone
+		nextKey   *uint
+		err       error
 	)
 
-	// TODO: 首屏必定 miss 需要换个方法
 	if _list := ng.getCache(req); _list != nil {
 		return _list, nil
 	}
 
-	if list, err = model.NewMilestoneModel(ng.dbCtx).FindAllByTimestamp(req.NextKey, req.Size+uint(1), "DESC"); err != nil {
+	if req.NextKey == 0 {
+		timestamp = uint(time.Now().UnixNano() / 1e6)
+	} else {
+		timestamp = req.NextKey
+	}
+
+	if list, err = model.NewMilestoneModel(ng.dbCtx).FindAllByTimestamp(timestamp, req.Size+uint(1), "DESC"); err != nil {
 		ng.svcCtx.Logger.Error(err)
 		return nil, appErr.NewError("服务器异常，请稍后再试")
 	}
