@@ -6,7 +6,13 @@ import (
 	"asoul-fan-support/app/service/types"
 	appErr "asoul-fan-support/lib/err"
 	"context"
+	"fmt"
 	"gorm.io/gorm"
+	"time"
+)
+
+const (
+	defaultCacheTTL = 5 * time.Minute
 )
 
 type NextGroupLogic struct {
@@ -30,6 +36,11 @@ func (ng *NextGroupLogic) NextGroup(req types.NextGroupReq) (*types.PaginationLi
 		err     error
 	)
 
+	// TODO: 首屏必定 miss 需要换个方法
+	if _list := ng.getCache(req); _list != nil {
+		return _list, nil
+	}
+
 	if list, err = model.NewMilestoneModel(ng.dbCtx).FindAllByTimestamp(req.NextKey, req.Size+uint(1), "DESC"); err != nil {
 		ng.svcCtx.Logger.Error(err)
 		return nil, appErr.NewError("服务器异常，请稍后再试")
@@ -40,10 +51,26 @@ func (ng *NextGroupLogic) NextGroup(req types.NextGroupReq) (*types.PaginationLi
 		list = list[0 : len(list)-1]
 	}
 
-	return &types.PaginationList{
+	resp := &types.PaginationList{
 		List:    toReply(list),
 		NextKey: nextKey,
-	}, nil
+	}
+
+	ng.setCache(req, resp)
+	return resp, nil
+}
+
+func (ng *NextGroupLogic) getCache(req types.NextGroupReq) *types.PaginationList {
+	if data, isset := ng.svcCtx.Cache.Get(buildCacheKey(req)); isset {
+		if resp, ok := data.(*types.PaginationList); ok {
+			return resp
+		}
+	}
+	return nil
+}
+
+func (ng *NextGroupLogic) setCache(req types.NextGroupReq, data *types.PaginationList) {
+	_ = ng.svcCtx.Cache.Set(buildCacheKey(req), data, defaultCacheTTL)
 }
 
 func toReply(list []*model.Milestone) []*types.NextGroupReply {
@@ -59,4 +86,8 @@ func toReply(list []*model.Milestone) []*types.NextGroupReply {
 		})
 	}
 	return _list
+}
+
+func buildCacheKey(req types.NextGroupReq) string {
+	return fmt.Sprintf("cache_milestone_%d_%d", +req.NextKey, req.Size)
 }
