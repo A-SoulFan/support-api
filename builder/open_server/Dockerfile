@@ -10,7 +10,7 @@ ENV GOPROXY=https://goproxy.io,direct
 
 RUN go mod download
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOARM=6 go build -ldflags '-w -s' -o open_server open_server.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOARM=6 go build -ldflags '-w -s' -o open_server ./cmd/open_server/main.go
 
 FROM alpine as prod
 
