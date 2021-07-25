@@ -69,6 +69,11 @@ func (tq *timerQuery) generateCandidateList() error {
 
 	if maxId, err = tq.strollModel.FindMaxId(); err != nil {
 		return err
+	} else {
+		// on database clear
+		if maxId < 1 {
+			return errors.New("candidate list database is empty. ")
+		}
 	}
 
 	for i := 0; i < 20; i++ {
