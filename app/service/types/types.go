@@ -1,9 +1,28 @@
 package types
 
-type StrollReplay struct {
+type PaginationList struct {
+	List    interface{} `json:"list"`
+	NextKey interface{} `json:"next_key"`
+}
+
+type StrollReply struct {
 	Title     string `json:"title"`
 	Cover     string `json:"cover"`
 	BV        string `json:"bv"`
 	TargetUrl string `json:"target_url"`
 	CreatedAt uint   `json:"created_at"`
+}
+
+type NextGroupReq struct {
+	NextKey uint `form:"next_key" binding:"required,numeric,gt=0"`
+	Size    uint `form:"size,default=50" binding:"omitempty,numeric,gt=0,lt=100"`
+}
+
+type NextGroupReply struct {
+	Title     string `json:"title"`
+	Subtitled string `json:"subtitled"`
+	Type      string `json:"type"`
+	Content   string `json:"content"`
+	TargetUrl string `json:"target_url"`
+	Timestamp uint   `json:"timestamp"`
 }

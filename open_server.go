@@ -46,6 +46,9 @@ func loadConfig() config.Config {
 func initRouters(r *gin.Engine, svc *service.Context) {
 	// 随机溜
 	r.GET("/api/stroll/random", handler.RandomStrollHandler(svc))
+
+	// 大事件
+	r.GET("/api/milestone/next-group", handler.MilestoneNextGroup(svc))
 }
 
 func initRegister(svc *service.Context) {
