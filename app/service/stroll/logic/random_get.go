@@ -6,6 +6,7 @@ import (
 	"asoul-fan-support/app/service/types"
 	appErr "asoul-fan-support/lib/err"
 	"context"
+	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -32,6 +33,7 @@ func (r *RandomGetLogic) RandomGetStroll() (*types.StrollReply, error) {
 			Title:     stroll.Title,
 			Cover:     stroll.Cover,
 			BV:        stroll.BV,
+			PlayUrl:   fmt.Sprintf("//player.bilibili.com/player.html?bvid=%s", stroll.BV),
 			TargetUrl: stroll.TargetUrl,
 			CreatedAt: stroll.CreatedAt,
 		}, nil

@@ -9,6 +9,7 @@ type StrollReply struct {
 	Title     string `json:"title"`
 	Cover     string `json:"cover"`
 	BV        string `json:"bv"`
+	PlayUrl   string `json:"play_url"`
 	TargetUrl string `json:"target_url"`
 	CreatedAt uint   `json:"created_at"`
 }
