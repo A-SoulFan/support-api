@@ -3,16 +3,12 @@ package logic
 import (
 	"asoul-fan-support/app/service"
 	"asoul-fan-support/app/service/milestone/model"
+	"asoul-fan-support/app/service/milestone/task"
 	"asoul-fan-support/app/service/types"
 	appErr "asoul-fan-support/lib/err"
 	"context"
-	"fmt"
 	"gorm.io/gorm"
 	"time"
-)
-
-const (
-	defaultCacheTTL = 5 * time.Minute
 )
 
 type NextGroupLogic struct {
@@ -37,14 +33,17 @@ func (ng *NextGroupLogic) NextGroup(req types.NextGroupReq) (*types.PaginationLi
 		err       error
 	)
 
-	if _list := ng.getCache(req); _list != nil {
-		return _list, nil
-	}
-
 	if req.NextKey == 0 {
 		timestamp = uint(time.Now().UnixNano() / 1e6)
 	} else {
 		timestamp = req.NextKey
+	}
+
+	if _list := task.FindCacheAllByTimestampDesc(req.NextKey, req.Size); _list != nil {
+		return &types.PaginationList{
+			List:    toReply(_list),
+			NextKey: _list[len(_list)-1].Timestamp,
+		}, nil
 	}
 
 	if list, err = model.NewMilestoneModel(ng.dbCtx).FindAllByTimestamp(timestamp, req.Size+uint(1), "DESC"); err != nil {
@@ -62,21 +61,7 @@ func (ng *NextGroupLogic) NextGroup(req types.NextGroupReq) (*types.PaginationLi
 		NextKey: nextKey,
 	}
 
-	ng.setCache(req, resp)
 	return resp, nil
-}
-
-func (ng *NextGroupLogic) getCache(req types.NextGroupReq) *types.PaginationList {
-	if data, isset := ng.svcCtx.Cache.Get(buildCacheKey(req)); isset {
-		if resp, ok := data.(*types.PaginationList); ok {
-			return resp
-		}
-	}
-	return nil
-}
-
-func (ng *NextGroupLogic) setCache(req types.NextGroupReq, data *types.PaginationList) {
-	_ = ng.svcCtx.Cache.Set(buildCacheKey(req), data, defaultCacheTTL)
 }
 
 func toReply(list []*model.Milestone) []*types.NextGroupReply {
@@ -92,8 +77,4 @@ func toReply(list []*model.Milestone) []*types.NextGroupReply {
 		})
 	}
 	return _list
-}
-
-func buildCacheKey(req types.NextGroupReq) string {
-	return fmt.Sprintf("cache_milestone_%d_%d", +req.NextKey, req.Size)
 }

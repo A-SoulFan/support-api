@@ -4,7 +4,8 @@ import (
 	"asoul-fan-support/app/handler"
 	"asoul-fan-support/app/service"
 	"asoul-fan-support/app/service/config"
-	"asoul-fan-support/app/service/stroll/task"
+	milestoneTask "asoul-fan-support/app/service/milestone/task"
+	strollTask "asoul-fan-support/app/service/stroll/task"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
@@ -52,5 +53,6 @@ func initRouters(r *gin.Engine, svc *service.Context) {
 }
 
 func initRegister(svc *service.Context) {
-	task.Register(svc)
+	strollTask.Register(svc)
+	milestoneTask.Register(svc)
 }
