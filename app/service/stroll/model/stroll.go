@@ -25,6 +25,7 @@ type (
 		Cover     string `json:"cover"`
 		BV        string `json:"bv" gorm:"uniqueIndex:uq_bv"`
 		TargetUrl string `json:"target_url"`
+		Play      string `json:"play"`
 		CreatedAt uint   `json:"created_at" gorm:"autoCreateTime:milli"`
 		UpdatedAt uint   `json:"updated_at" gorm:"autoUpdateTime:milli"`
 		DeletedAt uint   `json:"deleted_at" gorm:"index:idx_deleted,uniqueIndex:uq_bv"`
