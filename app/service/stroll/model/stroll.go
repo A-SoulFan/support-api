@@ -10,6 +10,7 @@ type (
 		Insert(data *Stroll) error
 		Delete(primaryKey uint) error
 		Update(data *Stroll) error
+		UpdateCover(bvId, cover string) error
 		FindOne(primaryKey uint) (*Stroll, error)
 		FindAllByIds(primaryKeyList []uint) ([]*Stroll, error)
 		FindMaxId() (uint, error)
@@ -48,6 +49,11 @@ func (m *defaultStrollModel) Delete(primaryKey uint) error {
 
 func (m *defaultStrollModel) Update(data *Stroll) error {
 	result := m.conn.Table("stroll").Updates(data)
+	return result.Error
+}
+
+func (m *defaultStrollModel) UpdateCover(bvId, cover string) error {
+	result := m.conn.Table("stroll").Where("bv = ?", bvId).Update("cover", cover)
 	return result.Error
 }
 
