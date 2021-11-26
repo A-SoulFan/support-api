@@ -2,6 +2,7 @@ package main
 
 import (
 	"asoul-fan-support/app/handler"
+	"asoul-fan-support/app/middleware"
 	"asoul-fan-support/app/service"
 	"asoul-fan-support/app/service/config"
 	milestoneTask "asoul-fan-support/app/service/milestone/task"
@@ -46,6 +47,8 @@ func loadConfig() config.Config {
 }
 
 func initRouters(r *gin.Engine, svc *service.Context) {
+	r.Use(middleware.Cors())
+
 	// 随机溜
 	r.GET("/api/stroll/random", handler.RandomStrollHandler(svc))
 
@@ -54,6 +57,9 @@ func initRouters(r *gin.Engine, svc *service.Context) {
 
 	// 下列为新人指南相关API 暂时实现在这里
 	// 注意 response request 风格均不相同
+
+	// 推荐切片
+	r.GET("/api/recommend-slice", handler.RecommendHandler(svc))
 
 	// 头部图片
 	r.GET("/asf/mobile/headpicture", handler.GetBannerListHandler(svc))
