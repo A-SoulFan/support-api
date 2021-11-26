@@ -5,6 +5,7 @@ import (
 	"asoul-fan-support/app/service"
 	"asoul-fan-support/app/service/config"
 	milestoneTask "asoul-fan-support/app/service/milestone/task"
+	recommendSliceTask "asoul-fan-support/app/service/recommend_slice/task"
 	strollTask "asoul-fan-support/app/service/stroll/task"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
@@ -55,4 +56,5 @@ func initRouters(r *gin.Engine, svc *service.Context) {
 func initRegister(svc *service.Context) {
 	strollTask.Register(svc)
 	milestoneTask.Register(svc)
+	recommendSliceTask.Register(svc)
 }
