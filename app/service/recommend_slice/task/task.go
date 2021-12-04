@@ -124,43 +124,30 @@ func (tr *taskGetRecommendSlice) rearrange() {
 	sort.Sort(tr.recommendSlice)
 }
 
-var csvLenMap = map[int]func(v *Video, val string){
-	1: func(v *Video, val string) {
-		v.PlayVal = val
-	},
-	2: func(v *Video, val string) {
-		v.ImageUrl = val
-	},
-	3: func(v *Video, val string) {
-		v.Url = val
-	},
-	4: func(v *Video, val string) {
-		v.Desc = val
-	},
-	5: func(v *Video, val string) {
-		v.Title = val
-	},
-	6: func(v *Video, val string) {
-		v.Auth = val
-	},
-	9: func(v *Video, val string) {
-		v.Time = val
-	},
-	10: func(v *Video, val string) {
-		v.TimeSecond = val
-	},
-	11: func(v *Video, val string) {
-		v.Bid = val
-		v.Url = fmt.Sprintf("https://www.bilibili.com/video/%s", val)
-	},
-}
-
 func buildVideo(csvLen []string) Video {
 	video := Video{}
 
 	for i, s := range csvLen {
-		if call, ok := csvLenMap[i]; ok {
-			call(&video, s)
+		switch i {
+		case 1:
+			video.PlayVal = s
+		case 2:
+			video.ImageUrl = s
+		case 3:
+			video.Url = s
+		case 4:
+			video.Desc = s
+		case 5:
+			video.Time = s
+		case 6:
+			video.Auth = s
+		case 9:
+			video.Time = s
+		case 10:
+			video.TimeSecond = s
+		case 11:
+			video.Bid = s
+			video.Url = fmt.Sprintf("https://www.bilibili.com/video/%s", s)
 		}
 	}
 
@@ -242,7 +229,13 @@ func search() error {
 					continue
 				}
 
-				if v.Created <= 1607702400 {
+				// 出道日之前的
+				if int64(v.Created) <= time.Date(2020, 12, 11, 0, 0, 0, 0, time.Local).Unix() {
+					continue
+				}
+
+				// 14天之前的
+				if int64(v.Created) <= time.Now().Add(-14*24*time.Hour).Unix() {
 					continue
 				}
 
