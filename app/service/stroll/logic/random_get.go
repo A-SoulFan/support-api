@@ -26,6 +26,11 @@ func NewRandomGetLogic(ctx context.Context, svcCtx *service.Context) RandomGetLo
 	}
 }
 
+func (r *RandomGetLogic) LastUpdateTime() (*types.StrollLastUpdateReply, error) {
+	resp := &types.StrollLastUpdateReply{LastUpdateTime: task.LastUpdateTime()}
+	return resp, nil
+}
+
 func (r *RandomGetLogic) RandomGetStroll() (*types.StrollReply, error) {
 	if stroll, err := task.RandomStroll(); err != nil {
 		r.svcCtx.Logger.Error(err)

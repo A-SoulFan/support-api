@@ -11,9 +11,10 @@ import (
 )
 
 type timerQuery struct {
-	svcCtx        *service.Context
-	candidateList []*model.Stroll
-	strollModel   model.StrollModel
+	svcCtx         *service.Context
+	candidateList  []*model.Stroll
+	lastUpdateTime uint
+	strollModel    model.StrollModel
 }
 
 var (
@@ -39,6 +40,10 @@ func RandomStroll() (model.Stroll, error) {
 	}
 
 	return _tq.randomStroll()
+}
+
+func LastUpdateTime() uint {
+	return _tq.lastUpdateTime
 }
 
 func (tq *timerQuery) init() {
@@ -88,6 +93,11 @@ func (tq *timerQuery) generateCandidateList() error {
 	}
 
 	tq.candidateList = strollList
+
+	if tq.lastUpdateTime, err = tq.strollModel.FindLastUpdateTime(); err != nil {
+		return err
+	}
+
 	return nil
 }
 

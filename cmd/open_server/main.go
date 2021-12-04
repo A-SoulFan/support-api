@@ -51,6 +51,7 @@ func initRouters(r *gin.Engine, svc *service.Context) {
 
 	// 随机溜
 	r.GET("/api/stroll/random", handler.RandomStrollHandler(svc))
+	r.GET("/api/stroll/last-update-time", handler.LastUpdateTimeHandler(svc))
 
 	// 大事件
 	r.GET("/api/milestone/next-group", handler.MilestoneNextGroup(svc))

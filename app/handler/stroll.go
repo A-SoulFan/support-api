@@ -18,3 +18,15 @@ func RandomStrollHandler(svc *service.Context) gin.HandlerFunc {
 		}
 	}
 }
+
+func LastUpdateTimeHandler(svc *service.Context) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		lg := logic.NewRandomGetLogic(ctx, svc)
+		if resp, err := lg.LastUpdateTime(); err != nil {
+			ctx.JSON(http.StatusInternalServerError, response.NewServerErrorResponse(err))
+			return
+		} else {
+			ctx.JSON(http.StatusOK, response.NewSuccessJsonResponse(resp))
+		}
+	}
+}

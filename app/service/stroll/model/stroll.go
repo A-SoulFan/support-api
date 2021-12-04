@@ -14,6 +14,7 @@ type (
 		FindOne(primaryKey uint) (*Stroll, error)
 		FindAllByIds(primaryKeyList []uint) ([]*Stroll, error)
 		FindMaxId() (uint, error)
+		FindLastUpdateTime() (uint, error)
 	}
 
 	defaultStrollModel struct {
@@ -74,10 +75,20 @@ func (m *defaultStrollModel) FindAllByIds(primaryKeyList []uint) ([]*Stroll, err
 
 func (m *defaultStrollModel) FindMaxId() (uint, error) {
 	stroll := &Stroll{}
-	result := m.conn.Raw("SELECT id FROM stroll WHERE deleted_at = 0 ORDER BY id DESC LIMIT 0, 1").Scan(stroll)
+	result := m.conn.Raw("SELECT id FROM stroll WHERE deleted_at = 0 ORDER BY id DESC LIMIT 0, 1").Scan(&stroll)
 	if result.Error != nil {
 		return 0, result.Error
 	}
 
 	return stroll.Id, nil
+}
+
+func (m *defaultStrollModel) FindLastUpdateTime() (uint, error) {
+	var stroll *Stroll
+	result := m.conn.Raw("SELECT * FROM stroll WHERE deleted_at = 0 ORDER BY id DESC LIMIT 0, 1").Find(&stroll)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return stroll.CreatedAt, nil
 }

@@ -5,6 +5,10 @@ type PaginationList struct {
 	NextKey interface{} `json:"next_key"`
 }
 
+type StrollLastUpdateReply struct {
+	LastUpdateTime uint `json:"last_update_time"`
+}
+
 type StrollReply struct {
 	Title     string `json:"title"`
 	Cover     string `json:"cover"`
