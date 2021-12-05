@@ -194,6 +194,7 @@ func search() error {
 		return err
 	}
 	defer cvFile.Close()
+	_, _ = cvFile.WriteString("\xEF\xBB\xBF") // UTF-8 BOM
 	cW := csv.NewWriter(cvFile)
 
 	b := &utility.BiliBili{}
