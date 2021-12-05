@@ -138,7 +138,7 @@ func buildVideo(csvLen []string) Video {
 		case 4:
 			video.Desc = s
 		case 5:
-			video.Time = s
+			video.Title = s
 		case 6:
 			video.Auth = s
 		case 9:
